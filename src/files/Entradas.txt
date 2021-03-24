@@ -1,0 +1,42 @@
+program{
+	main(){}
+
+	fn void name(){
+
+	}
+}
+
+program{
+	main(){}
+
+	fn void name(){
+            int num = 5;
+            while(num < 10){
+
+            }
+	}
+}
+
+program{
+	main(){}
+
+	fn void name(int dato, flt ff){
+            int num = 5;
+            while(num < 10){
+
+            }
+	}
+}
+
+program{
+	main(){
+		int dato = 10;
+		name();
+	}
+	fn void name(int dato, flt ff){
+            int num = 5;
+            while(num < 10){
+
+            }
+	}
+}
