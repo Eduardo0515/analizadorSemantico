@@ -8,7 +8,7 @@
   </information>
   <resources>
     <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
-    <jar href="AnalizadorSemantico.jar" size="11954715" download="eager" />
+    <jar href="AnalizadorSemantico.jar" size="11955148" download="eager" />
     <jar href="lib\commons-collections4-4.1.jar" size="751238" download="eager" />
     <jar href="lib\fontawesomefx-8.9.jar" size="571068" download="eager" />
     <jar href="lib\poi-3.16.jar" size="2679259" download="eager" />

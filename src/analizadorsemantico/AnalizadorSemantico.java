@@ -125,7 +125,7 @@ public class AnalizadorSemantico {
                     //estadoActual = 9;
                 } else if (tokens.get(contadorEntrada).equals("Comparacion")
                         || tokens.get(contadorEntrada - 2).equals("Comparacion")) {
-                    if (contexto.equals("main")) {
+                    /*if (contexto.equals("main")) {
                         if (idsMain.containsKey(lexemas.get(contadorEntrada - 1))) {
                             if (!idsMain.get(lexemas.get(contadorEntrada - 1)).getTipo().equals("int")) {
                                 errores.add("El tipo del identificador " + lexemas.get(contadorEntrada - 1) + " debe ser entero");
@@ -150,7 +150,7 @@ public class AnalizadorSemantico {
                         } else {
                             errores.add("2El identificador " + lexemas.get(contadorEntrada - 1) + " no está declarado en la función " + contexto);
                         }
-                    }
+                    }*/
                 } else if (lexemas.get(contadorEntrada).equals(";")) {
                     //estadoActual = 11;
                 }
@@ -365,6 +365,10 @@ public class AnalizadorSemantico {
 
     private String getTipoVariable() {
         return "";
+    }
+    
+    public ArrayList getErrores(){
+        return errores;
     }
 
 }

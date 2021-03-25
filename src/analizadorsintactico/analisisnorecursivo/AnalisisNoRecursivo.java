@@ -124,11 +124,11 @@ public class AnalisisNoRecursivo {
         if (pila.isEmpty()) {
             System.out.println("Correcto");
             //txtResultado.setText("La cadena es correcta");
-            resultado = "La entrada analizada es correcta.";
+            resultado = "Análisis sintáctico correcto.";
         } else {
             System.out.println("Incorrecto");
             //txtResultado.setText("La cadena es incorrecta\n" + descripcionError);
-            resultado = "La entrada analizada es incorrecta.\n" + descripcionError;
+            resultado = "La sintáxis es incorrecta.\n" + descripcionError;
         }
     }
 

@@ -36,7 +36,7 @@ import leerarchivo.LeerArchivo;
  * @author Hugo Ruiz
  */
 public class FXMLDocumentController implements Initializable {
-
+    
     private AutomataPrincipal automataPrincipal;
     private AnalisisNoRecursivo analisis;
     private AnalizadorSemantico analisisSemantico;
@@ -44,10 +44,10 @@ public class FXMLDocumentController implements Initializable {
     private ArrayList lexemas;
     private ArrayList lexemasLiterales;
     private ArrayList tokens;
-
+    
     @FXML
     private Slider textosSlider;
-
+    
     @FXML
     private TextArea entradaTxt, resultadoTxt, ejemploText;
     @FXML
@@ -56,7 +56,7 @@ public class FXMLDocumentController implements Initializable {
     private Rectangle btnAnalizar, btnEjemplo;
     @FXML
     private Text soloMain, funcion, iftext, invocacion, todo, textEjemplo;
-
+    
     @FXML
     private void handleButtonAction(ActionEvent event) {
         if (isEntradaAceptada(entradaTxt.getText())) {
@@ -73,10 +73,24 @@ public class FXMLDocumentController implements Initializable {
                 analisis.metodoPredictivoNoRecursivo();
                 resultadoTxt.setText(analisis.getResultado());
                 System.out.println("");
-                //Análisis semántico
-                analisisSemantico = new AnalizadorSemantico(lexemasLiterales, tokens);
-                analisisSemantico.addFunciones();
-                analisisSemantico.analizar();
+                if (analisis.getResultado().equals("Análisis sintáctico correcto.")) {
+                    //Análisis semántico
+                    analisisSemantico = new AnalizadorSemantico(lexemasLiterales, tokens);
+                    analisisSemantico.addFunciones();
+                    analisisSemantico.analizar();
+                    ArrayList errores = analisisSemantico.getErrores();
+                    if (errores.size() > 0) {
+                        for (Object error : errores) {
+                            resultadoTxt.setText(resultadoTxt.getText() + "\n" + error);
+                        }
+                        resultadoTxt.setStyle("-fx-control-inner-background:#000000; -fx-font-family: Consolas; -fx-highlight-fill: "
+                                + "#827e7e; -fx-highlight-text-fill: #000000; -fx-text-fill: red; -fx-font-size: 16");
+                    } else {
+                        resultadoTxt.setText(resultadoTxt.getText() + "\n" + "Análisis semántico correcto");
+                        resultadoTxt.setStyle("-fx-control-inner-background:#000000; -fx-font-family: Consolas; -fx-highlight-fill: "
+                                + "#827e7e; -fx-highlight-text-fill: #000000; -fx-text-fill: green; -fx-font-size: 16");
+                    }
+                }
             } catch (IOException ex) {
                 Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -84,20 +98,20 @@ public class FXMLDocumentController implements Initializable {
             alert();
         }
     }
-
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         automataPrincipal = new AutomataPrincipal();
         estilo();
         modificarTextoEjemplo(0);
     }
-
+    
     public void leerTabla() throws IOException {
         LeerArchivo leerArchivo = new LeerArchivo();
         leerArchivo.leerExcel();
         tabla = leerArchivo.getTabla();
     }
-
+    
     public void estilo() {
         entradaTxt.setStyle("-fx-control-inner-background:#000000; -fx-font-family: Consolas; -fx-highlight-fill: "
                 + "#827e7e; -fx-highlight-text-fill: #000000; -fx-text-fill: #ffffff; -fx-font-size: 18");
@@ -114,7 +128,7 @@ public class FXMLDocumentController implements Initializable {
             modificarTextoEjemplo(textosSlider.getValue());
         });
     }
-
+    
     public void modificarTextoEjemplo(double valor) {
         if (valor <= 20) {
             ejemploText.setText(soloMain.getText());
@@ -133,11 +147,11 @@ public class FXMLDocumentController implements Initializable {
             textEjemplo.setText("Ejemplo con salida de dato");
         }
     }
-
+    
     public boolean isEntradaAceptada(String entradatxt) {
         Pattern p = Pattern.compile("^[\\s]+$");
         Matcher m = p.matcher(entradatxt);
-
+        
         if (m.find() || entradatxt.length() == 0) {
             return false;
         }
@@ -149,7 +163,7 @@ public class FXMLDocumentController implements Initializable {
         System.out.println(entradatxt.matches("\\$"));
         return true;
     }
-
+    
     public void alert() {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Error");
@@ -157,47 +171,47 @@ public class FXMLDocumentController implements Initializable {
         alert.setContentText("Por favor, verifique la cadena ingresada y vuelva a ejecutar.");
         alert.showAndWait();
     }
-
+    
     double x, y;
-
+    
     @FXML
     void dragged(MouseEvent event) {
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setX(event.getScreenX() - x);
         stage.setY(event.getScreenY() - y);
     }
-
+    
     @FXML
     void pressed(MouseEvent event) {
         x = event.getSceneX();
         y = event.getSceneY();
     }
-
+    
     @FXML
     private void min(MouseEvent event) {
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setIconified(true);
     }
-
+    
     @FXML
     private void max(MouseEvent event) {
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setFullScreen(true);
     }
-
+    
     @FXML
     private void close(MouseEvent event) {
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.close();
     }
-
+    
     @FXML
     void analizador(MouseEvent event) {
         ventanaAnalizar.toFront();
         btnAnalizar.setFill(Color.rgb(50, 59, 70));
         btnEjemplo.setFill(Color.rgb(26, 32, 40));
     }
-
+    
     @FXML
     void ejemplos(MouseEvent event) {
         ventanaEjemplo.toFront();
