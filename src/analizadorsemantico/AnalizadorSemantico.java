@@ -125,7 +125,32 @@ public class AnalizadorSemantico {
                     //estadoActual = 9;
                 } else if (tokens.get(contadorEntrada).equals("Comparacion")
                         || tokens.get(contadorEntrada - 2).equals("Comparacion")) {
-                    //estadoActual = 10;
+                    if (contexto.equals("main")) {
+                        if (idsMain.containsKey(lexemas.get(contadorEntrada - 1))) {
+                            if (!idsMain.get(lexemas.get(contadorEntrada - 1)).getTipo().equals("int")) {
+                                errores.add("El tipo del identificador " + lexemas.get(contadorEntrada - 1) + " debe ser entero");
+                            } else {
+                                if (idsMain.get(lexemas.get(contadorEntrada - 1)).getEstado().equals("No inicializado")) {
+                                    errores.add("El identificador " + lexemas.get(contadorEntrada - 1) + " no ha sido inicializado");
+                                }
+                            }
+                        } else {
+                            errores.add("El identificador " + lexemas.get(contadorEntrada - 1) + " no ha sido declarado");
+                        }
+                    } else {
+                        if (isVariableExistente(funciones.get(contexto).getVariables(), lexemas.get(contadorEntrada - 1).toString())) {
+                            Variable vari = getVariable(funciones.get(contexto).getVariables(), lexemas.get(contadorEntrada - 1).toString());
+                            if (!vari.getTipo().equals("int")) {
+                                errores.add("El tipo del identificador " + lexemas.get(contadorEntrada - 1) + " debe ser entero");
+                            } else {
+                                if (vari.getEstado().equals("No inicializado")) {
+                                    errores.add("El identificador " + vari.getNombre() + " no ha sido inicializado");
+                                }
+                            }
+                        } else {
+                            errores.add("2El identificador " + lexemas.get(contadorEntrada - 1) + " no está declarado en la función " + contexto);
+                        }
+                    }
                 } else if (lexemas.get(contadorEntrada).equals(";")) {
                     //estadoActual = 11;
                 }
@@ -133,7 +158,7 @@ public class AnalizadorSemantico {
                 if (tokens.get(contadorEntrada).equals("Identificador")) {
                     Variable variableParametro = new Variable();
                     boolean isExistente = false;
-                    if (contexto.equals("main")) {                      
+                    if (contexto.equals("main")) {
                         if (idsMain.containsKey(lexemas.get(contadorEntrada))) {
                             variableParametro = idsMain.get(lexemas.get(contadorEntrada));
                             isExistente = true;
@@ -149,12 +174,13 @@ public class AnalizadorSemantico {
                         }
                     }
                     if (isExistente) {
-                        System.out.println(parametros.size() +" "+numParametro);
-                        System.out.println(lexemas.get(contadorEntrada));
-                        System.out.println(lexemas.get(contadorEntrada-1));
                         if (parametros.size() >= numParametro + 1) {
                             if (!parametros.get(numParametro).getTipo().equals(variableParametro.getTipo())) {
                                 errores.add("El tipo del identificador " + variableParametro.getNombre() + " no coincide con el tipo especificado en los parámetros de la función " + nombreFuncion);
+                            } else {
+                                if (variableParametro.getEstado().equals("No inicializado")) {
+                                    errores.add("El identificador " + variableParametro.getNombre() + " no ha sido inicializado");
+                                }
                             }
                         } else {
                             errores.add("1No se esperaba el argumento " + lexemas.get(contadorEntrada) + " en la función " + nombreFuncion);
@@ -198,7 +224,9 @@ public class AnalizadorSemantico {
                     }
                     estadoActual = 0;
                 }
-                numParametro++;
+                if (!lexemas.get(contadorEntrada).equals(",")) {
+                    numParametro++;
+                }
             } else if (estadoActual == 9) {
                 if (contexto.equals("main")) {
                     System.out.println("En main");
@@ -211,8 +239,6 @@ public class AnalizadorSemantico {
                     System.out.println("En funcion " + contexto);
 
                 }
-            } else if (estadoActual == 10) {
-
             } else if (estadoActual == 11) {
 
             } else if (estadoActual == 55) {
