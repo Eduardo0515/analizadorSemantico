@@ -7,6 +7,7 @@ package analizadorsemantico;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Stack;
 
 /**
  *
@@ -60,6 +61,8 @@ public class AnalizadorSemantico {
                     tipoDato = lexemas.get(contadorEntrada).toString();
                 } else if (tokens.get(contadorEntrada).equals("Identificador")) {
                     estadoActual = 7;
+                } else if (lexemas.get(contadorEntrada).equals("return")) {
+                    estadoActual = 11;
                 }
             } else if (estadoActual == 1) {
                 if (tokens.get(contadorEntrada).equals("Identificador")) {
@@ -84,14 +87,15 @@ public class AnalizadorSemantico {
                 }
 
             } else if (estadoActual == 3) {
-                String valor = tokens.get(contadorEntrada).toString();
-                String valorLiteral = lexemas.get(contadorEntrada).toString();
-                System.out.println(valorLiteral + " " + tipoDato);
-                if (tipoDato.equals("int") && valor.equals("Entero") || tipoDato.equals("flt") && valor.equals("Decimal")
-                        || tipoDato.equals("strg") && valor.equals("Cadena") || tipoDato.equals("bool") && valor.equals("Booleano")) {
-                    idsMain.get(variable).setEstado("Inicializado");
-                } else {
-                    errores.add("El valor " + valorLiteral + " no es compatible con " + tipoDato);
+                if (contexto.equals("main")) {
+                    String valor = tokens.get(contadorEntrada).toString();
+                    String valorLiteral = lexemas.get(contadorEntrada).toString();
+                    if (tipoDato.equals("int") && valor.equals("Entero") || tipoDato.equals("flt") && valor.equals("Decimal")
+                            || tipoDato.equals("strg") && valor.equals("Cadena") || tipoDato.equals("bool") && valor.equals("Booleano")) {
+                        idsMain.get(variable).setEstado("Inicializado");
+                    } else {
+                        errores.add("El valor " + valorLiteral + " no es compatible con " + tipoDato);
+                    }
                 }
                 estadoActual = 0;
             } else if (estadoActual == 4) {
@@ -114,7 +118,7 @@ public class AnalizadorSemantico {
                     //Comprobar si hay una función declarada con el nombre especificado
                     nombreFuncion = lexemas.get(contadorEntrada - 1).toString();
                     if (funciones.containsKey(nombreFuncion)) {
-                        parametros = funciones.get(nombreFuncion).getVariables();
+                        parametros = funciones.get(nombreFuncion).getParametros();
                         numParametro = 0;
                         estadoActual = 8;
                     } else {
@@ -125,7 +129,7 @@ public class AnalizadorSemantico {
                     //estadoActual = 9;
                 } else if (tokens.get(contadorEntrada).equals("Comparacion")
                         || tokens.get(contadorEntrada - 2).equals("Comparacion")) {
-                    /*if (contexto.equals("main")) {
+                    if (contexto.equals("main")) {
                         if (idsMain.containsKey(lexemas.get(contadorEntrada - 1))) {
                             if (!idsMain.get(lexemas.get(contadorEntrada - 1)).getTipo().equals("int")) {
                                 errores.add("El tipo del identificador " + lexemas.get(contadorEntrada - 1) + " debe ser entero");
@@ -150,7 +154,8 @@ public class AnalizadorSemantico {
                         } else {
                             errores.add("2El identificador " + lexemas.get(contadorEntrada - 1) + " no está declarado en la función " + contexto);
                         }
-                    }*/
+                    }
+                    estadoActual = 0;
                 } else if (lexemas.get(contadorEntrada).equals(";")) {
                     //estadoActual = 11;
                 }
@@ -240,9 +245,41 @@ public class AnalizadorSemantico {
 
                 }
             } else if (estadoActual == 11) {
-
+                Funcion funcionR = funciones.get(contexto);
+                if (funcionR.getTipo().equals("void")) {
+                    errores.add("Return inválido, la función " + contexto + " es de tipo void");
+                    estadoActual = 55;
+                } else {
+                    estadoActual = 13;
+                }
+            } else if (estadoActual == 13) {
+                contadorEntrada = contadorEntrada - 1;
+                Funcion funcionReturn = funciones.get(contexto);
+                if (tokens.get(contadorEntrada).equals("Identificador")) {
+                    if (isVariableExistente(funcionReturn.getVariables(), lexemas.get(contadorEntrada).toString())) {
+                        Variable varReturn = getVariable(funcionReturn.getVariables(), lexemas.get(contadorEntrada).toString());
+                        if (varReturn.getEstado().equals("No inicializado")) {
+                            errores.add("El identificador " + varReturn.getNombre() + " no ha sido inicializado");
+                        } else {
+                            if (!varReturn.getTipo().equals(funcionReturn.getTipo())) {
+                                errores.add("El tipo del identificador " + varReturn.getNombre() + " no coincide con el tipo declarado en la función " + contexto);
+                            }
+                        }
+                    } else {
+                        errores.add("rEl identificador " + lexemas.get(contadorEntrada) + " no existe en la función " + contexto);
+                    }
+                } else if (funcionReturn.getTipo().equals("int") && tokens.get(contadorEntrada).equals("Entero")
+                        || funcionReturn.getTipo().equals("flt") && tokens.get(contadorEntrada).equals("Decimal")
+                        || funcionReturn.getTipo().equals("strg") && tokens.get(contadorEntrada).equals("Cadena")
+                        || funcionReturn.getTipo().equals("bool") && tokens.get(contadorEntrada).equals("Booleano")) {
+                } else {
+                    errores.add("El tipo de dato retornado en la función " + contexto + " no coincide con el tipo declarado.");
+                }
+                estadoActual = 0;
             } else if (estadoActual == 55) {
                 if (lexemas.get(contadorEntrada).equals(")")) {
+                    contadorEntrada = 0;
+                } else if (lexemas.get(contadorEntrada).equals(";")) {
                     contadorEntrada = 0;
                 }
             }
@@ -325,6 +362,7 @@ public class AnalizadorSemantico {
                     errores.add("El identificador " + parametro + " ha sido declarado previamente.");
                 } else {
                     funciones.get(variable).setVariableInd(new Variable(parametro, tipoDato, "Inicializado"));
+                    funciones.get(variable).setParametroInd(new Variable(parametro, tipoDato, "Inicializado"));
                 }
                 estadoActual = 6;
             } else if (estadoActual == 6) {
@@ -343,10 +381,59 @@ public class AnalizadorSemantico {
         System.out.println("");
     }
 
-    private boolean isVariableExistente(ArrayList<Variable> variables, String parametro) {
+    public void verificarFuncion() {
+        int estadoInicio = 0;
+        estadoActual = estadoInicio;
+        contadorEntrada = 0;
+        Stack llaves = new Stack();
+        String nombreFuncion = "";
+        boolean existReturn = false;
+        llaves.clear();
+        while (contadorEntrada < lexemas.size()) {
+            if (estadoActual == 0) {
+                if (lexemas.get(contadorEntrada).equals("fn")) {
+                    estadoActual = 1;
+                    existReturn = false;
+                    nombreFuncion = lexemas.get(contadorEntrada + 2).toString();
+                }
+            } else if (estadoActual == 1) {
+                System.out.println(lexemas.get(contadorEntrada));
+                if (!lexemas.get(contadorEntrada).equals("void")) {
+                    estadoActual = 2;
+                } else {
+                    estadoActual = 0;
+                }
+            } else if (estadoActual == 2) {
+                if (lexemas.get(contadorEntrada).equals("{")) {
+                    llaves.push("{");
+                } else if (lexemas.get(contadorEntrada).equals("}")) {
+                    llaves.pop();
+                    estadoActual = 3;
+                }
+                if (lexemas.get(contadorEntrada).equals("return")) {
+                    existReturn = true;
+                }
+            } else if (estadoActual == 3) {
+                if (llaves.isEmpty()) {
+                    if (!existReturn) {
+                        errores.add("La función " + nombreFuncion + " necesita un valor de retorno");
+                    }
+                    estadoActual = 0;
+                    contadorEntrada--;
+                } else {
+                    estadoActual = 2;
+                }
+            }
+            contadorEntrada++;
+        }
+
+        System.out.println(errores);
+    }
+
+    private boolean isVariableExistente(ArrayList<Variable> variables, String nombreVariable) {
         boolean isExistente = false;
         for (Variable var : variables) {
-            if (var.getNombre().equals(parametro)) {
+            if (var.getNombre().equals(nombreVariable)) {
                 isExistente = true;
             }
         }
@@ -366,8 +453,8 @@ public class AnalizadorSemantico {
     private String getTipoVariable() {
         return "";
     }
-    
-    public ArrayList getErrores(){
+
+    public ArrayList getErrores() {
         return errores;
     }
 

@@ -77,6 +77,7 @@ public class FXMLDocumentController implements Initializable {
                     //Análisis semántico
                     analisisSemantico = new AnalizadorSemantico(lexemasLiterales, tokens);
                     analisisSemantico.addFunciones();
+                    analisisSemantico.verificarFuncion();
                     analisisSemantico.analizar();
                     ArrayList errores = analisisSemantico.getErrores();
                     if (errores.size() > 0) {

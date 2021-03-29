@@ -14,10 +14,12 @@ import java.util.ArrayList;
 public class Funcion {
     private String tipo;
     private ArrayList<Variable> variables;
+    private ArrayList<Variable> parametros;
     
     public Funcion(String tipo){
         this.tipo = tipo;
         variables = new ArrayList<Variable>();
+        parametros = new ArrayList<Variable>();
     }
 
     public String getTipo() {
@@ -38,6 +40,18 @@ public class Funcion {
     
     public void setVariableInd(Variable variable){
         this.variables.add(variable);
+    }
+    
+     public ArrayList<Variable> getParametros() {
+        return parametros;
+    }
+
+    public void setParametros(ArrayList<Variable> parametros) {
+        this.parametros = parametros;
+    }
+    
+    public void setParametroInd(Variable variable){
+        this.parametros.add(variable);
     }
     
 }
