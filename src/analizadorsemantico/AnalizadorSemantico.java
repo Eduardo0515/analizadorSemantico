@@ -95,14 +95,39 @@ public class AnalizadorSemantico {
                 String valor = tokens.get(contadorEntrada).toString();
                 String valorLiteral = lexemas.get(contadorEntrada).toString();
                 if (contexto.equals("main")) {
-                    if (tipoDato.equals("int") && valor.equals("Entero") || tipoDato.equals("flt") && valor.equals("Decimal")
+                    if (valor.equals("Identificador")) {
+                        if (idsMain.containsKey(valorLiteral)) {
+                            if (idsMain.get(valorLiteral).getEstado().equals("Inicializado")) {
+                                if (!idsMain.get(valorLiteral).getTipo().equals(tipoDato)) {
+                                    errores.add("El tipo del identificador " + valorLiteral + " no coincide con " + tipoDato);
+                                }
+                            } else {
+                                errores.add("El identificador " + valorLiteral + " no ha sido inicializado");
+                            }
+                        } else {
+                            errores.add("El identificador " + valorLiteral + " no se ha declarado en main");
+                        }
+                    } else if (tipoDato.equals("int") && valor.equals("Entero") || tipoDato.equals("flt") && valor.equals("Decimal")
                             || tipoDato.equals("strg") && valor.equals("Cadena") || tipoDato.equals("bool") && valor.equals("Booleano")) {
                         idsMain.get(variable).setEstado("Inicializado");
                     } else {
                         errores.add("El valor " + valorLiteral + " no es compatible con " + tipoDato);
                     }
                 } else {
-                    if (tipoDato.equals("int") && valor.equals("Entero") || tipoDato.equals("flt") && valor.equals("Decimal")
+                    if (valor.equals("Identificador")) {
+                        if (isVariableExistente(funciones.get(contexto).getVariables(), valorLiteral)) {
+                            Variable variablee = getVariable(funciones.get(contexto).getVariables(), valorLiteral);
+                            if (variablee.getEstado().equals("Inicializado")) {
+                                if (!variablee.getTipo().equals(tipoDato)) {
+                                    errores.add("El tipo del identificador " + valorLiteral + " no coincide con " + tipoDato);
+                                }
+                            } else {
+                                errores.add("El identificador " + valorLiteral + " no ha sido inicializado");
+                            }
+                        } else {
+                            errores.add("El identificador " + valorLiteral + " no se ha declarado en la función " + contexto);
+                        }
+                    } else if (tipoDato.equals("int") && valor.equals("Entero") || tipoDato.equals("flt") && valor.equals("Decimal")
                             || tipoDato.equals("strg") && valor.equals("Cadena") || tipoDato.equals("bool") && valor.equals("Booleano")) {
                         int indice = getIndiceVariable(funciones.get(contexto).getVariables(), variable);
                         funciones.get(contexto).getVariables().get(indice).setEstado("Inicializado");
@@ -175,6 +200,26 @@ public class AnalizadorSemantico {
                     estadoActual = 0;
                 } else if (lexemas.get(contadorEntrada).equals(";")) {
                     //estadoActual = 11;
+                } else {
+                    if (contexto.equals("main")) {
+                        if (idsMain.containsKey(lexemas.get(contadorEntrada - 1))) {
+                            if (idsMain.get(lexemas.get(contadorEntrada - 1)).getEstado().equals("No inicializado")) {
+                                errores.add("El identificador " + lexemas.get(contadorEntrada - 1) + " no ha sido inicializado");
+                            }
+                        } else {
+                            errores.add("El identificador " + lexemas.get(contadorEntrada - 1) + " no ha sido declarado");
+                        }
+                    } else {
+                        if (isVariableExistente(funciones.get(contexto).getVariables(), lexemas.get(contadorEntrada - 1).toString())) {
+                            Variable vari = getVariable(funciones.get(contexto).getVariables(), lexemas.get(contadorEntrada - 1).toString());
+                            if (vari.getEstado().equals("No inicializado")) {
+                                errores.add("El identificador " + vari.getNombre() + " no ha sido inicializado");
+                            }
+                        } else {
+                            errores.add("oEl identificador " + lexemas.get(contadorEntrada - 1) + " no está declarado en la función " + contexto);
+                        }
+                    }
+                    estadoActual = 0;
                 }
             } else if (estadoActual == 8) {
                 if (tokens.get(contadorEntrada).equals("Identificador")) {
@@ -252,8 +297,8 @@ public class AnalizadorSemantico {
                     estadoActual = 0;
                 }
                 /*if (!lexemas.get(contadorEntrada).equals(",")) {
-                    numParametro++;
-                }*/
+                 numParametro++;
+                 }*/
             } else if (estadoActual == 9) {
                 String nombreVar = lexemas.get(contadorEntrada - 2).toString();
                 if (contexto.equals("main")) {
