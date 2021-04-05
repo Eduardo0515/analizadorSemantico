@@ -81,7 +81,6 @@ public class AnalisisNoRecursivo {
             }
         } while (!pila.isEmpty() && apuntado < lexemas.size() && error == false);
         if (!error) {
-            System.out.println(pila);
             pila.pop();
             mostrarEvolucionPila(pila);
         }
@@ -112,7 +111,6 @@ public class AnalisisNoRecursivo {
             } else {
                 encontrado = opciones[0];
             }
-            System.out.println(datoApuntado + " " + datoPila + " ECO " + encontrado);
             elementos = encontrado.split(" ");
             for (int i = elementos.length - 1; i >= 0; i--) {
                 pila.push(elementos[i]);
@@ -122,12 +120,8 @@ public class AnalisisNoRecursivo {
 
     public void evaluarPila(Stack pila) {
         if (pila.isEmpty()) {
-            System.out.println("Correcto");
-            //txtResultado.setText("La cadena es correcta");
             resultado = "Análisis sintáctico correcto.";
         } else {
-            System.out.println("Incorrecto");
-            //txtResultado.setText("La cadena es incorrecta\n" + descripcionError);
             resultado = "La sintáxis es incorrecta.\n" + descripcionError;
         }
     }
@@ -137,9 +131,7 @@ public class AnalisisNoRecursivo {
     }
 
     public void mostrarEvolucionPila(Stack pila) {
-        //evolucionPila += pila.toString() + "\n";
-        System.out.println(pila);
-        //contenidoPila.setText(evolucionPila);
+        //System.out.println(pila);
     }
 
     public String verificarTipoContenido(String elemento) {

@@ -63,6 +63,8 @@ public class AnalizadorSemantico {
                     estadoActual = 7;
                 } else if (lexemas.get(contadorEntrada).equals("return")) {
                     estadoActual = 11;
+                } else if (lexemas.get(contadorEntrada).equals("inp")) {
+                    estadoActual = 15;
                 }
             } else if (estadoActual == 1) {
                 if (tokens.get(contadorEntrada).equals("Identificador")) {
@@ -429,6 +431,8 @@ public class AnalizadorSemantico {
                     errores.add("La función " + lexemas.get(contadorEntrada) + " no existe");
                     estadoActual = 55;
                 }
+            } else if (estadoActual == 15) {
+                estadoActual = 55;
             } else if (estadoActual == 55) {
                 if (lexemas.get(contadorEntrada).equals(")")) {
                     contadorEntrada = 0;
@@ -438,12 +442,6 @@ public class AnalizadorSemantico {
             }
             contadorEntrada++;
         }
-
-        System.out.println(errores);
-        /* ArrayList<Variable> test = funciones.get("funcion").getVariables();
-         for(Variable var: test){
-         System.out.println(var.getNombre());
-         }*/
     }
 
     public void addFunciones() {
@@ -519,11 +517,6 @@ public class AnalizadorSemantico {
             }
             contadorEntrada++;
         }
-
-        for (Funcion var : funciones.values()) {
-            System.out.println(var.getTipo());
-        }
-        System.out.println("");
     }
 
     public void verificarFuncion() {
@@ -542,7 +535,6 @@ public class AnalizadorSemantico {
                     nombreFuncion = lexemas.get(contadorEntrada + 2).toString();
                 }
             } else if (estadoActual == 1) {
-                System.out.println(lexemas.get(contadorEntrada));
                 if (!lexemas.get(contadorEntrada).equals("void")) {
                     estadoActual = 2;
                 } else {
@@ -571,8 +563,6 @@ public class AnalizadorSemantico {
             }
             contadorEntrada++;
         }
-
-        System.out.println(errores);
     }
 
     private boolean isVariableExistente(ArrayList<Variable> variables, String nombreVariable) {
