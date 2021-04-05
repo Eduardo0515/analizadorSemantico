@@ -22,6 +22,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.MouseEvent;
@@ -58,6 +59,8 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private Rectangle btnAnalizar, btnEjemplo;
     @FXML
+    private CheckBox checkSintaxis, checkSemantica;
+    @FXML
     private Text soloMain, funcion, iftext, invocacion, todo, textEjemplo;
 
     @FXML
@@ -67,13 +70,20 @@ public class FXMLDocumentController implements Initializable {
             try {
                 analisisSintactico();
                 if (analisis.getResultado().equals("Análisis sintáctico correcto.")) {
+                    checkSintaxis.setSelected(true);
                     analisisSemantico();
                     if (analizarErroresSemanticos()) {
+                        checkSemantica.setSelected(true);
                         crearCodigoJava();
                         compilar();
+                    } else {
+                        checkSemantica.setSelected(false);
                     }
                 } else {
                     setColorText("red");
+                    checkSintaxis.setSelected(false);
+                    checkSemantica.setSelected(false);
+                    resultadoTxt.setText(analisis.getResultado());
                 }
             } catch (IOException ex) {
                 System.out.println(ex);
@@ -94,7 +104,8 @@ public class FXMLDocumentController implements Initializable {
         leerTabla();
         analisis = new AnalisisNoRecursivo(lexemas, tabla);
         analisis.metodoPredictivoNoRecursivo();
-        resultadoTxt.setText(analisis.getResultado());
+        //resultadoTxt.setText(analisis.getResultado());
+        resultadoTxt.setText("...");
     }
 
     private void analisisSemantico() {
@@ -119,10 +130,11 @@ public class FXMLDocumentController implements Initializable {
         //ejecucion.compilarCodigo();
         ejecucion.ejecutarCodigo();
         //resultadoTxt.setText(resultadoTxt.getText() + "\n");
-        resultadoTxt.setText("...");
+        resultadoTxt.setText("");
         for (Object salida : ejecucion.getSalida()) {
-            resultadoTxt.setText(resultadoTxt.getText() + "\n" + salida);
+            resultadoTxt.setText(resultadoTxt.getText() + salida + "\n");
         }
+        resultadoTxt.setText(resultadoTxt.getText()+"\n...Ejecución finalizada");
     }
 
     private boolean analizarErroresSemanticos() {
@@ -134,7 +146,8 @@ public class FXMLDocumentController implements Initializable {
             setColorText("red");
             return false;
         } else {
-            resultadoTxt.setText(resultadoTxt.getText() + "\n" + "Análisis semántico correcto");
+            //resultadoTxt.setText(resultadoTxt.getText() + "\n" + "Análisis semántico correcto");
+            resultadoTxt.setText("...");
             setColorText("green");
             return true;
         }

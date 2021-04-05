@@ -3,6 +3,7 @@
 <?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.image.Image?>
@@ -11,6 +12,8 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
+<?import javafx.scene.paint.LinearGradient?>
+<?import javafx.scene.paint.Stop?>
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
@@ -47,16 +50,16 @@
                   <Font name="Segoe UI" size="15.0" />
                </font>
             </Text>
-            <Text fill="WHITE" layoutX="110.0" layoutY="238.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Analizar">
+            <Text fill="WHITE" layoutX="110.0" layoutY="238.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Ejecución">
                <font>
                   <Font name="Segoe UI" size="15.0" />
                </font>
             </Text>
             <FontAwesomeIconView fill="WHITE" glyphName="LIST" layoutX="76.0" layoutY="306.0" size="15" />
             <FontAwesomeIconView fill="WHITE" glyphName="CODE" layoutX="76.0" layoutY="239.0" size="17" />
-            <Text fill="#0099ff" layoutX="20.0" layoutY="67.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Elihu">
+            <Text fill="#0099ff" layoutX="63.0" layoutY="66.0" strokeType="OUTSIDE" strokeWidth="0.0" text="E l i H u">
                <font>
-                  <Font name="Centaur" size="29.0" />
+                  <Font name="Centaur" size="33.0" />
                </font>
             </Text>
          </children>
@@ -68,7 +71,7 @@
             <Pane fx:id="ventanaAnalizar" prefHeight="620.0" prefWidth="928.0" style="-fx-background-color: #314252;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
                   <TextArea fx:id="entradaTxt" layoutX="63.0" layoutY="92.0" prefHeight="368.0" prefWidth="988.0" />
-                  <TextArea fx:id="resultadoTxt" layoutX="63.0" layoutY="489.0" prefHeight="155.0" prefWidth="988.0" />
+                  <TextArea fx:id="resultadoTxt" layoutX="63.0" layoutY="489.0" prefHeight="155.0" prefWidth="830.0" />
                   <Button layoutX="861.0" layoutY="35.0" mnemonicParsing="false" onAction="#ejecucionCodigo" prefHeight="36.0" prefWidth="147.0" style="-fx-background-color: #596675; -fx-background-radius: 20;" text="Ejecutar" textFill="WHITE">
                      <font>
                         <Font name="Serif Regular" size="15.0" />
@@ -89,6 +92,19 @@
                         <Image url="@../static/img/registry-icon-20.jpg" />
                      </image>
                   </ImageView>
+                  <Rectangle arcHeight="5.0" arcWidth="5.0" height="155.0" layoutX="907.0" layoutY="489.0" stroke="#514e4e" strokeType="INSIDE" width="145.0">
+                     <fill>
+                        <LinearGradient endX="1.0" endY="1.0" startX="1.0" startY="0.580952380952381">
+                           <stops>
+                              <Stop color="#1a2028" />
+                              <Stop color="#212932" offset="0.4914089347079038" />
+                              <Stop color="#29323c" offset="1.0" />
+                           </stops>
+                        </LinearGradient>
+                     </fill>
+                  </Rectangle>
+                  <CheckBox fx:id="checkSintaxis" layoutX="920.0" layoutY="530.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="152.0" stylesheets="@../styles/checkbox.css" text="Análisis sintáctico" textFill="WHITE" />
+                  <CheckBox fx:id="checkSemantica" layoutX="920.0" layoutY="587.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="152.0" stylesheets="@../styles/checkbox.css" text="Análisis semántico" textFill="WHITE" />
                </children>
             </Pane>
             <Pane fx:id="ventanaEjemplo" prefHeight="475.0" prefWidth="566.0" style="-fx-background-color: #314252;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">

@@ -122,6 +122,9 @@ public class AnalizadorSemantico {
                             if (variablee.getEstado().equals("Inicializado")) {
                                 if (!variablee.getTipo().equals(tipoDato)) {
                                     errores.add("El tipo del identificador " + valorLiteral + " no coincide con " + tipoDato);
+                                }else{
+                                    int indicee = getIndiceVariable(funciones.get(contexto).getVariables(), variable);
+                                    funciones.get(contexto).getVariables().get(indicee).setEstado("Inicializado");
                                 }
                             } else {
                                 errores.add("El identificador " + valorLiteral + " no ha sido inicializado");
