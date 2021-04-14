@@ -20,9 +20,11 @@ import java.util.logging.Logger;
 public class Ejecucion {
 
     private ArrayList salida;
+    private ArrayList errores;
 
     public Ejecucion() {
         salida = new ArrayList();
+        errores = new ArrayList();
     }
 
     public void compilarCodigo() {
@@ -47,9 +49,9 @@ public class Ejecucion {
             try {
                 System.out.println("Here is the standard output of the command:\n");
                 printLines(procE.getInputStream());
-                
+
                 System.out.println("Here is the standard error of the command (if any):\n");
-                //printLines(procE.getErrorStream());
+                errorLines(procE.getErrorStream());
             } catch (Exception ex) {
                 Logger.getLogger(CodigoJava.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -69,7 +71,22 @@ public class Ejecucion {
         }
     }
 
+    private void errorLines(InputStream ins) throws Exception {
+        errores.clear();
+        String line = null;
+        BufferedReader in = new BufferedReader(
+                new InputStreamReader(ins));
+        while ((line = in.readLine()) != null) {
+            System.out.println(line);
+            errores.add(line);
+        }
+    }
+
     public ArrayList getSalida() {
         return salida;
+    }
+
+    public ArrayList getErrores() {
+        return errores;
     }
 }

@@ -131,10 +131,17 @@ public class FXMLDocumentController implements Initializable {
         ejecucion.ejecutarCodigo();
         //resultadoTxt.setText(resultadoTxt.getText() + "\n");
         resultadoTxt.setText("");
-        for (Object salida : ejecucion.getSalida()) {
-            resultadoTxt.setText(resultadoTxt.getText() + salida + "\n");
+        if (ejecucion.getErrores().isEmpty()) {
+            int a = 0;
+            for (Object salida : ejecucion.getSalida()) {
+                resultadoTxt.setText(resultadoTxt.getText() + salida + "\n");
+            }
+            setColorText("green");
+        }else{
+            resultadoTxt.setText(resultadoTxt.getText() + "Ha ocurrido un problema durante la ejecución del código." + "\n");
+            setColorText("red");
         }
-        resultadoTxt.setText(resultadoTxt.getText()+"\n...Ejecución finalizada");
+        resultadoTxt.setText(resultadoTxt.getText() + "\n...Ejecución finalizada");
     }
 
     private boolean analizarErroresSemanticos() {
